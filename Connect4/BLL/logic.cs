@@ -12,18 +12,14 @@ namespace Connect4.Classes
             else { return false; }
         }
 
-        public static int FullBoard(char[,] board, int columns)
+        public static bool FullBoard(char[,] board, int columns)
         {
-            int full = 0;
-
-            for (int i = 0; i < columns; ++i)
+            for (int column = 0; column < columns; column++)
             {
-                if (board[1, i] != '*')
-                {
-                    full++;
-                }
+                if (board[0, column] != 'X' && board[0, column] != 'O') return false;
             }
-            return full;
+
+            return true;
         }
 
         public static bool CheckFour(char[,] board, playerInfo activePlayer, int rows, int columns)

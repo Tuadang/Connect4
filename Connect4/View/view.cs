@@ -20,6 +20,7 @@ namespace Connect4.View
 
         public void startGame()
         {
+            Console.Clear();
             Console.WriteLine("Let's Play Connect 4");
 
             do
@@ -107,9 +108,7 @@ namespace Connect4.View
                     }
                 }
 
-                full = logic.FullBoard(board, columns);
-
-                if (full == 7)
+                if (logic.FullBoard(board, columns))
                 {
                     Console.WriteLine("The board is full, it is a draw!");
                     again = restart(board);
@@ -121,15 +120,17 @@ namespace Connect4.View
         static int PlayerDrop(char[,] board, playerInfo activePlayer, int columns)
         {
             int dropChoice;
+            string input;
 
             Console.WriteLine(activePlayer.playerName + "'s Turn ");
             do
             {
                 Console.WriteLine($"Please enter a number between 1 and {columns}: ");
-                dropChoice = Convert.ToInt32(Console.ReadLine()) - 1;
-            } while (dropChoice < 1 || dropChoice > 7);
+                input = Console.ReadLine();
+                dropChoice = Convert.ToInt32(input) - 1;
+            } while (dropChoice < 0 || dropChoice > columns || !int.TryParse(input, out int result));
 
-            while (board[1, dropChoice] == 'X' || board[1, dropChoice] == 'O')
+            while (board[0, dropChoice] == 'X' || board[0, dropChoice] == 'O')
             {
                 Console.WriteLine("That row is full, please enter a new row: ");
                 dropChoice = Convert.ToInt32(Console.ReadLine());
@@ -159,29 +160,33 @@ namespace Connect4.View
 
         }
 
-        static void PlayerWin(playerInfo activePlayer)
+        public static void PlayerWin(playerInfo activePlayer)
         {
             Console.WriteLine(activePlayer.playerName + " Connected Four, You Win!");
         }
 
-        static int restart(char[,] board)
+        public int restart(char[,] board)
         {
             int restart;
-
-            Console.WriteLine("Would you like to restart? Yes(1) No(2): ");
-            restart = Convert.ToInt32(Console.ReadLine());
-            if (restart == 1)
+            do
             {
-                for (int i = 1; i <= 6; i++)
+                Console.WriteLine("Would you like to restart? Yes(1) No(2): ");
+                if (!int.TryParse(Console.ReadLine(), out restart))
                 {
-                    for (int ix = 1; ix <= 7; ix++)
+                    Console.WriteLine("Fill in a valid number.");
+                    continue;
+                } else
+                {
+                    if (restart == 1)
                     {
-                        board[i, ix] = '*';
+                        startGame();
                     }
+                    else if (restart == 2)
+                    { Console.WriteLine("Goodbye!"); }
+                    else { Console.WriteLine("Fill in a valid number."); }
                 }
-            }
-            else
-                Console.WriteLine("Goodbye!");
+            } while (restart != 1 && restart != 2);
+
             return restart;
         }
     }
