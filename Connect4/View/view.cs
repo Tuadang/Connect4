@@ -127,6 +127,7 @@ namespace Connect4.View
             {
                 Console.WriteLine($"Please enter a number between 1 and {columns}: ");
                 input = Console.ReadLine();
+
                 dropChoice = Convert.ToInt32(input) - 1;
             } while (dropChoice < 0 || dropChoice > columns || !int.TryParse(input, out int result));
 
@@ -143,20 +144,21 @@ namespace Connect4.View
         {
             int i, ix;
 
+
             for (i = 0; i < rows; i++)
             {
                 Console.Write("|");
                 for (ix = 0; ix < columns; ix++)
                 {
                     if (board[i, ix] != 'X' && board[i, ix] != 'O')
+                    {
                         board[i, ix] = '*';
-
+                    }
+                    Console.Write(" ");
                     Console.Write(board[i, ix]);
-
                 }
-
-                Console.Write("| \n");
-            }
+                Console.Write(" | \n");
+            } 
 
         }
 
