@@ -13,9 +13,10 @@ namespace Connect4.View
         public playerInfo playerOne = new playerInfo();
         public playerInfo playerTwo = new playerInfo();
         public char[,] board = new char[9, 10];
-        public int dropChoice, win, full, again, rows = 6, columns = 7;
+        public int dropChoice, full, again, rows = 6, columns = 7;
         public logic logic = new logic();
         public string strRows, strColumns;
+        public bool win = false;
 
         public void startGame()
         {
@@ -43,7 +44,7 @@ namespace Connect4.View
                 // Loop untill user types stop
                 while (!int.TryParse(strColumns, out columns));
 
-                if (logic.checkDimensions(rows, columns))
+                if (logic.CheckDimensions(rows, columns))
                 {
                     board = new char[rows, columns];
                 }
@@ -55,7 +56,7 @@ namespace Connect4.View
                 }
             }
             // Check dimensions in the logic layer
-            while (!logic.checkDimensions(rows, columns));
+            while (!logic.CheckDimensions(rows, columns));
 
             Console.WriteLine("Player One please enter your name: ");
             playerOne.playerName = Console.ReadLine();
@@ -66,21 +67,20 @@ namespace Connect4.View
             playerTwo.playerID = 'O';
 
             full = 0;
-            win = 0;
             again = 0;
 
             DisplayBoard(board, rows, columns);
 
             do
             {
-                dropChoice = PlayerDrop(board, playerOne);
+                dropChoice = PlayerDrop(board, playerOne, columns);
                 logic.CheckBellow(board, playerOne, dropChoice, rows);
 
                 DisplayBoard(board, rows, columns);
 
                 win = logic.CheckFour(board, playerOne, rows, columns);
 
-                if (win == 1)
+                if (win)
                 {
                     PlayerWin(playerOne);
                     again = restart(board);
@@ -90,14 +90,14 @@ namespace Connect4.View
                     }
                 }
 
-                dropChoice = PlayerDrop(board, playerTwo);
+                dropChoice = PlayerDrop(board, playerTwo, columns);
                 logic.CheckBellow(board, playerTwo, dropChoice, rows);
 
                 DisplayBoard(board, rows, columns);
 
                 win = logic.CheckFour(board, playerTwo, rows, columns);
 
-                if (win == 1)
+                if (win)
                 {
                     PlayerWin(playerTwo);
                     again = restart(board);
@@ -118,15 +118,15 @@ namespace Connect4.View
             } while (again != 2);
         }
 
-        static int PlayerDrop(char[,] board, playerInfo activePlayer)
+        static int PlayerDrop(char[,] board, playerInfo activePlayer, int columns)
         {
             int dropChoice;
 
             Console.WriteLine(activePlayer.playerName + "'s Turn ");
             do
             {
-                Console.WriteLine("Please enter a number between 1 and 7: ");
-                dropChoice = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine($"Please enter a number between 1 and {columns}: ");
+                dropChoice = Convert.ToInt32(Console.ReadLine()) - 1;
             } while (dropChoice < 1 || dropChoice > 7);
 
             while (board[1, dropChoice] == 'X' || board[1, dropChoice] == 'O')

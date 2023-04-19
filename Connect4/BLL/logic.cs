@@ -1,10 +1,12 @@
-﻿using static Connect4.View.view;
+﻿using System.Data.Common;
+using System.Numerics;
+using static Connect4.View.view;
 
 namespace Connect4.Classes
 {
     public class logic
     {
-        public bool checkDimensions(int rows, int columns)
+        public bool CheckDimensions(int rows, int columns)
         {
             if (rows >= 4 && rows <= 10 && columns >= 4 && columns <= 10) { return true; }
             else { return false; }
@@ -13,90 +15,86 @@ namespace Connect4.Classes
         public static int FullBoard(char[,] board, int columns)
         {
             int full = 0;
-            for (int i = 0; i <= columns; ++i)
+
+            for (int i = 0; i < columns; ++i)
             {
                 if (board[1, i] != '*')
                 {
-                    ++full;
+                    full++;
                 }
             }
-
             return full;
         }
 
-        public static int CheckFour(char[,] board, playerInfo activePlayer, int rows, int columns)
+        public static bool CheckFour(char[,] board, playerInfo activePlayer, int rows, int columns)
         {
             char XO = activePlayer.playerID;
-            int win = 0;
 
-            for (int i = rows; i >= 1; --i)
+            for (int i = 0; i < rows; i++)
             {
-
-                for (int ix = columns; ix >= 1; --ix)
+                for (int j = 0; j < columns; j++)
                 {
-
-                    if (board[i, ix] == XO &&
-                        board[i - 1, ix - 1] == XO &&
-                        board[i - 2, ix - 2] == XO &&
-                        board[i - 3, ix - 3] == XO)
+                    // Horizontal
+                    if (i + 3 < columns)
                     {
-                        win = 1;
+                        if (board[i, j] == XO &&
+                            board[i + 1, j] == XO &&
+                            board[i + 2, j] == XO &&
+                            board[i + 3, j] == XO)
+                        { return true; }
                     }
 
-                    if (board[i, ix] == XO &&
-                        board[i, ix - 1] == XO &&
-                        board[i, ix - 2] == XO &&
-                        board[i, ix - 3] == XO)
+                    // Vertical 
+                    if (j + 3 < columns)
                     {
-                        win = 1;
+                        if (board[i, j] == XO &&
+                            board[i, j + 1] == XO &&
+                            board[i, j + 2] == XO &&
+                            board[i, j + 3] == XO)
+                        { return true; }
                     }
 
-                    if (board[i, ix] == XO &&
-                        board[i - 1, ix] == XO &&
-                        board[i - 2, ix] == XO &&
-                        board[i - 3, ix] == XO)
+                    // Diagonal up
+                    if (i - 3 >= 0 && j + 3 < columns)
                     {
-                        win = 1;
+                        if (board[i, j] == XO &&
+                        board[i - 1, j + 1] == XO &&
+                        board[i - 2, j + 2] == XO &&
+                        board[i - 3, j + 3] == XO)
+                        { return true; }
                     }
 
-                    if (board[i, ix] == XO &&
-                        board[i - 1, ix + 1] == XO &&
-                        board[i - 2, ix + 2] == XO &&
-                        board[i - 3, ix + 3] == XO)
+                    // Diagonal down
+                    if (i + 3 < columns && j + 3 < rows)
                     {
-                        win = 1;
-                    }
-
-                    if (board[i, ix] == XO &&
-                         board[i, ix + 1] == XO &&
-                         board[i, ix + 2] == XO &&
-                         board[i, ix + 3] == XO)
-                    {
-                        win = 1;
+                        if (board[i, j] == XO &&
+                        board[i + 1, j + 1] == XO &&
+                        board[i + 2, j + 2] == XO &&
+                        board[i + 3, j + 3] == XO)
+                        { return true; }
                     }
                 }
-
             }
 
-            return win;
+            return false;
         }
 
         public static void CheckBellow(char[,] board, playerInfo activePlayer, int dropChoice, int row)
         {
-            int turn = 0;
+            bool able = false;
 
             do
             {
                 if (board[row - 1, dropChoice] != 'X' && board[row - 1, dropChoice] != 'O')
                 {
                     board[row - 1, dropChoice] = activePlayer.playerID;
-                    turn = 1;
+                    able = true;
                 }
                 else
                 {
                     --row;
                 }
-            } while (turn != 1);
+            } while (able == false);
         }
     }
 }
